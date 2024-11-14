@@ -1,46 +1,39 @@
-import { useState, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
 import "./App.css";
-import { Data } from "./utils/Data";
+import { restClient, IAggResponseFormatted } from "polygon.io";
+import { useQuery } from "react-query";
+import {} from "polygon.io";
 
 const LineChart = lazy(() => import("./components/LineChart")); // Always lazy load your chart components. As chart components are
 //built on top of web canvas, it takes a little while to load its bundle.
 
+const POLY_API_KEY: string = import.meta.env.VITE_POLY_API_KEY;
+
+const rest = restClient(POLY_API_KEY);
+
 Chart.register(CategoryScale); //todo: find out what it does
 
 function App() {
-  const [chartData] = useState({
-    labels: Data.map((data) => data.year),
-    datasets: [
-      {
-        label: "Users Gained ", // used for legend
-        data: Data.map((data) => data.userGain), //unravel array of data in
-        backgroundColor: [
-          "rgba(75,192,192,1)",
-          "&quot;#ecf0f1",
-          "#50AF95",
-          "#f3ba2f",
-          "#2a71d0",
-        ], // marker colors
-        borderColor: "green", // line color
-        borderWidth: 5, //line width
-      },
-      {
-        label: "Users Lost",
-        data: Data.map((data) => data.userLost),
-        borderColor: "red",
-        borderWidth: 5,
-      },
-    ],
+  const { status, data: stockResults } = useQuery<IAggResponseFormatted>({
+    queryKey: ["stock"],
+    queryFn: () =>
+      rest.stocks.aggregates("AAPL", 1, "day", "2023-01-01", "2024-04-14"),
   });
 
-  //Suspense will put your UI in a pending state until the chart has been loaded:
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LineChart chartData={chartData} />
-    </Suspense>
-  );
+  switch (status) {
+    case "loading":
+      return <h1>Loading results</h1>;
+    case "error":
+      return <h1>Error getting results</h1>;
+    case "success":
+      return (
+        <Suspense fallback={<div>Loading...</div>}>
+          <LineChart stockResults={stockResults} />
+        </Suspense>
+      );
+  }
 }
 
 export default App;
