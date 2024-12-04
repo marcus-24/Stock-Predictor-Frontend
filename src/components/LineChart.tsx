@@ -1,20 +1,21 @@
-import { useMemo } from "react";
+import { useMemo, ReactElement } from "react";
 import { Line } from "react-chartjs-2";
 import { lineChartOptions } from "./LineChartOptions";
-import { IAggResponseFormatted } from "polygon.io";
-import { IAggV2Formatted } from "polygon.io/lib/rest/stocks/aggregates";
+import { IStock } from "../interfaces";
 
-function formatData(stockResults: IAggResponseFormatted) {
+//Reference: https://medium.com/@arifwaghbakriwala97/time-series-prediction-intervals-1866545a5554
+
+function formatData(stockResults: IStock[]) {
   // avoid recalculation same results during rerender
   return {
-    labels: stockResults.results.map((data: IAggV2Formatted) => {
-      const date = new Date(data.timestamp!);
+    labels: stockResults.map((data: IStock) => {
+      const date = new Date(data.Date!);
       return date.toDateString();
     }),
     datasets: [
       {
-        label: stockResults.ticker,
-        data: stockResults.results.map((data: IAggV2Formatted) => data.close),
+        label: "AAPL", //todo: Need to make this an input
+        data: stockResults.map((data: IStock) => data.Close),
         borderColor: "green",
         borderWidth: 3,
       },
@@ -22,7 +23,7 @@ function formatData(stockResults: IAggResponseFormatted) {
   };
 }
 
-function LineChart({ stockResults }: { stockResults: IAggResponseFormatted }) {
+function LineChart({ stockResults }: { stockResults: IStock[] }): ReactElement {
   const chartData = useMemo(() => formatData(stockResults), [stockResults]); // only recalculate if 'stockResults' changes
 
   return (

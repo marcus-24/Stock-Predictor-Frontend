@@ -1,25 +1,33 @@
 import { lazy, Suspense } from "react";
 import Chart from "chart.js/auto";
-import { CategoryScale } from "chart.js";
+import { CategoryScale, TimeScale, TimeSeriesScale } from "chart.js";
 import "./App.css";
-import { restClient, IAggResponseFormatted } from "polygon.io";
 import { useQuery } from "react-query";
-import {} from "polygon.io";
+import annotationPlugin from "chartjs-plugin-annotation";
+import axios from "axios";
+import { IStock } from "./interfaces";
 
 const LineChart = lazy(() => import("./components/LineChart")); // Always lazy load your chart components. As chart components are
 //built on top of web canvas, it takes a little while to load its bundle.
 
-const POLY_API_KEY: string = import.meta.env.VITE_POLY_API_KEY;
+const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL; //need to have "VITE" prefix env variables and use this import method instead
 
-const rest = restClient(POLY_API_KEY);
+Chart.register(CategoryScale, annotationPlugin, TimeScale, TimeSeriesScale); // allows for chartjs to see plugins within the "options" variable.
 
-Chart.register(CategoryScale); //todo: find out what it does
+async function getStockData(
+  start_date: string,
+  end_date: string
+): Promise<IStock[]> {
+  const response = await axios.get(
+    `${BACKEND_URL}/data/ticker/AAPL/range/${start_date}/${end_date}`
+  );
+  return response.data;
+}
 
 function App() {
-  const { status, data: stockResults } = useQuery<IAggResponseFormatted>({
+  const { status, data: stockResults } = useQuery({
     queryKey: ["stock"],
-    queryFn: () =>
-      rest.stocks.aggregates("AAPL", 1, "day", "2023-01-01", "2024-04-14"),
+    queryFn: () => getStockData("2024-01-01", "2024-12-03"),
   });
 
   switch (status) {

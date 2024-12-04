@@ -1,4 +1,6 @@
-export const lineChartOptions = {
+import { ChartOptions } from "chart.js";
+
+export const lineChartOptions: ChartOptions<"line"> = {
   plugins: {
     title: {
       display: true,
@@ -8,6 +10,19 @@ export const lineChartOptions = {
     legend: {
       display: true,
     },
+    annotation: {
+      // Had to use chartjs-plugin-annotation and register in the App.tsx
+      annotations: {
+        line1: {
+          type: "line",
+          mode: "vertical",
+          scaleID: "x",
+          value: "Tue May 21 2024",
+          borderColor: "rgb(255, 99, 132)",
+          borderWidth: 2,
+        },
+      },
+    },
   },
   elements: {
     point: {
@@ -16,6 +31,11 @@ export const lineChartOptions = {
   },
   scales: {
     x: {
+      // type: "time",
+      // time: {
+      //   // Luxon format string
+      //   tooltipFormat: "DD T",
+      // },
       title: { display: true, text: "Date", font: { size: 30 } },
       ticks: {
         font: { size: 14 },
