@@ -8,10 +8,7 @@ import { IStock } from "../interfaces";
 function formatData(stockResults: IStock[]) {
   // avoid recalculation same results during rerender
   return {
-    labels: stockResults.map((data: IStock) => {
-      const date = new Date(data.Date!);
-      return date.toDateString();
-    }),
+    labels: stockResults.map((data: IStock) => new Date(data.Date!)),
     datasets: [
       {
         label: "AAPL", //todo: Need to make this an input

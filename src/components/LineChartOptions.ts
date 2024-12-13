@@ -15,9 +15,8 @@ export const lineChartOptions: ChartOptions<"line"> = {
       annotations: {
         line1: {
           type: "line",
-          mode: "vertical",
           scaleID: "x",
-          value: "Tue May 21 2024",
+          value: "2024-05-01",
           borderColor: "rgb(255, 99, 132)",
           borderWidth: 2,
         },
@@ -31,11 +30,13 @@ export const lineChartOptions: ChartOptions<"line"> = {
   },
   scales: {
     x: {
-      // type: "time",
-      // time: {
-      //   // Luxon format string
-      //   tooltipFormat: "DD T",
-      // },
+      min: "original", // Set min to the minimum value in your data
+      max: "original", // Set max to the maximum value in your data
+      type: "time",
+      time: {
+        unit: "week",
+        displayFormats: { day: "yyyy MM" },
+      },
       title: { display: true, text: "Date", font: { size: 30 } },
       ticks: {
         font: { size: 14 },
