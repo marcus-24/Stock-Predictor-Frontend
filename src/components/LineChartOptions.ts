@@ -1,10 +1,11 @@
 import { ChartOptions } from "chart.js";
+import moment from "moment";
 
 export const lineChartOptions: ChartOptions<"line"> = {
   plugins: {
     title: {
       display: true,
-      text: "Stock Price",
+      text: "Stock Prediction Application",
       font: { size: 30 }, //change title text size
     },
     legend: {
@@ -16,7 +17,7 @@ export const lineChartOptions: ChartOptions<"line"> = {
         line1: {
           type: "line",
           scaleID: "x",
-          value: "2024-05-01",
+          value: moment().format("YYYY-MM-DD"), //TODO: change so it tracks current time at given periods
           borderColor: "rgb(255, 99, 132)",
           borderWidth: 2,
         },

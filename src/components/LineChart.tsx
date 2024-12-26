@@ -5,27 +5,35 @@ import { IStock } from "../interfaces";
 
 //Reference: https://medium.com/@arifwaghbakriwala97/time-series-prediction-intervals-1866545a5554
 
-function formatData(stockResults: IStock[]) {
+function formatData(results: IStock[]) {
   // avoid recalculation same results during rerender
-  return {
-    labels: stockResults.map((data: IStock) => new Date(data.Date!)),
+  return results.map((result) => ({ x: result.Date, y: result.Close }));
+}
+
+function LineChart({
+  stocks,
+  preds,
+}: {
+  stocks: IStock[];
+  preds: IStock[];
+}): ReactElement {
+  const chartData = {
     datasets: [
       {
-        label: "AAPL", //todo: Need to make this an input
-        data: stockResults.map((data: IStock) => data.Close),
+        label: "Historical Stock",
+        data: useMemo(() => formatData(stocks), [stocks]),
         borderColor: "green",
-        borderWidth: 3,
+      },
+      {
+        label: "Predictions",
+        data: useMemo(() => formatData(preds), [preds]),
+        borderColor: "orange",
       },
     ],
   };
-}
-
-function LineChart({ stockResults }: { stockResults: IStock[] }): ReactElement {
-  const chartData = useMemo(() => formatData(stockResults), [stockResults]); // only recalculate if 'stockResults' changes
 
   return (
     <div className="chart-container">
-      <h2>Line Chart</h2>
       <Line data={chartData} options={lineChartOptions} />
     </div>
   );
