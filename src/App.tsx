@@ -1,35 +1,33 @@
 import { lazy, Suspense } from "react";
+import axios from "axios";
 import Chart from "chart.js/auto";
 import { TimeScale } from "chart.js";
 import "chartjs-adapter-date-fns";
 import "./App.css";
 import { useQueries } from "react-query";
 import annotationPlugin from "chartjs-plugin-annotation";
-import moment from "moment";
-import { getStockData, getPredictionData } from "./utils/datafetchers";
 import { IStock } from "./interfaces";
 
-const N_DAYS_PRED: number = 7;
-const TODAY_DATE: string = moment().format("YYYY-MM-DD");
-const START_DATE: string = moment().subtract(1, "years").format("YYYY-MM-DD");
-// const PRED_DATE: string = moment()
-//   .add(N_DAYS_PRED, "days")
-//   .format("YYYY-MM-DD");
-
+const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL; //need to have "VITE" prefix env variables and use this import method instead
 const LineChart = lazy(() => import("./components/LineChart")); // Always lazy load your chart components. As chart components are
 //built on top of web canvas, it takes a little while to load its bundle.
 
 Chart.register(annotationPlugin, TimeScale); // allows for chartjs to see plugins within the "options" variable.
 
+const getData = async (url: string) => {
+  const response = await axios.get(url);
+  return response.data;
+};
+
 function App() {
   const results = useQueries([
     {
       queryKey: ["stocks"],
-      queryFn: () => getStockData(START_DATE, TODAY_DATE),
+      queryFn: () => getData(`${BACKEND_URL}/data/ticker`),
     },
     {
-      queryKey: ["predicitons"],
-      queryFn: () => getPredictionData(N_DAYS_PRED),
+      queryKey: ["predictons"],
+      queryFn: () => getData(`${BACKEND_URL}/prediction/ticker`),
     },
   ]);
 

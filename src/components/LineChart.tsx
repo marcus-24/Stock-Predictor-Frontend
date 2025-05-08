@@ -5,7 +5,7 @@ import { IStock } from "../interfaces";
 
 //Reference: https://medium.com/@arifwaghbakriwala97/time-series-prediction-intervals-1866545a5554
 
-function formatData(results: IStock[]) {
+function formatData(results: IStock[]): { x: number; y: number }[] {
   // avoid recalculation same results during rerender
   return results.map((result) => ({ x: result.Date, y: result.Close }));
 }
@@ -27,7 +27,7 @@ function LineChart({
       {
         label: "Predictions",
         data: useMemo(() => formatData(preds), [preds]),
-        borderColor: "orange",
+        borderColor: "blue",
       },
     ],
   };
