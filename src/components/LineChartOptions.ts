@@ -19,7 +19,7 @@ export const lineChartOptions: ChartOptions<"line"> = {
           scaleID: "x",
           value: moment().format("YYYY-MM-DD"), //TODO: change so it tracks current time at given periods
           borderColor: "rgb(255, 99, 132)",
-          borderWidth: 2,
+          borderWidth: 3,
         },
       },
     },
@@ -28,6 +28,9 @@ export const lineChartOptions: ChartOptions<"line"> = {
     point: {
       radius: 0, //no marker
     },
+    line: {
+      borderWidth: 1 // set line border width globally
+    }
   },
   scales: {
     x: {
