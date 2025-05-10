@@ -49,8 +49,9 @@ function LineChart({
       {
         label: "Predictions",
         data: useMemo(() => formatData(preds), [preds]),
+        fill: "start",
         borderColor: "black",
-        // backgroundColor: defineBackgroundColor,
+        backgroundColor: defineBackgroundColor,
       },
     ],
   };
