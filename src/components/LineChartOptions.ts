@@ -5,7 +5,7 @@ export const lineChartOptions: ChartOptions<"line"> = {
   plugins: {
     title: {
       display: true,
-      text: "Stock Prediction Application",
+      text: "Apple Stock Prediction Application",
       font: { size: 30 }, //change title text size
     },
     legend: {
@@ -25,11 +25,8 @@ export const lineChartOptions: ChartOptions<"line"> = {
     },
   },
   elements: {
-    point: {
-      radius: 0, //no marker
-    },
     line: {
-      borderWidth: 1 // set line border width globally
+      borderWidth: 3 // set line border width globally
     }
   },
   scales: {

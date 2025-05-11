@@ -6,25 +6,50 @@ import { ScriptableContext } from "chart.js";
 
 //Reference: https://medium.com/@arifwaghbakriwala97/time-series-prediction-intervals-1866545a5554
 
+function getPriceDifference(context: ScriptableContext<"line">): number {
+  return (
+    (context.dataset.data[context.dataIndex] as number) -
+    (context.dataset.data[0] as number)
+  );
+}
+
 function formatData(results: IStock[]): { x: number; y: number }[] {
   // avoid recalculation same results during rerender
   return results.map((result) => ({ x: result.Date, y: result.Close }));
 }
 
-function defineBackgroundColor(context: ScriptableContext<"line">) {
+function defineBorderColor(context: ScriptableContext<"line">): string {
+  const priceDifference = getPriceDifference(context);
+  return priceDifference > 0 ? "green" : "red";
+}
+
+function showLastPoint(context: ScriptableContext<"line">): number {
+  /**
+   * If the current data pt is the last one, the radius is set to 5,
+   * otherwise, it's set to 0.
+   */
+  const index = context.dataIndex;
+  const dataArr = context.dataset.data;
+  return index === dataArr.length - 1 ? 5 : 0;
+}
+
+function defineBackgroundColor(
+  context: ScriptableContext<"line">
+): CanvasGradient | undefined {
   if (!context.chart.chartArea) {
     return; //skip function if context is not available when page is loading
   }
   const ctx = context.chart.ctx;
   const { top, bottom } = context.chart.chartArea;
-  const gradientBg: CanvasGradient = ctx.createLinearGradient(
-    0,
-    top,
-    0,
-    bottom
-  );
-  gradientBg.addColorStop(0, "rgba(0, 255, 34, 0.9)");
-  gradientBg.addColorStop(1, "rgba(255, 255, 255, 0.7)");
+  const gradientBg = ctx.createLinearGradient(0, top, 0, bottom);
+  const priceDifference = getPriceDifference(context);
+
+  priceDifference > 0
+    ? gradientBg.addColorStop(0, "rgba(0, 255, 34, 0.1)")
+    : gradientBg.addColorStop(0, "rgba(255, 8, 0, 0.1)");
+
+  gradientBg.addColorStop(0.8, "rgba(255, 255, 255, 0.7)");
+
   return gradientBg;
 }
 
@@ -43,15 +68,20 @@ function LineChart({
         label: "Historical Stock",
         data: useMemo(() => formatData(stocks), [stocks]),
         fill: "start",
-        borderColor: "black",
+        borderColor: defineBorderColor,
         backgroundColor: defineBackgroundColor,
+        pointRadius: showLastPoint,
+        pointBackgroundColor: defineBorderColor,
       },
       {
         label: "Predictions",
         data: useMemo(() => formatData(preds), [preds]),
         fill: "start",
-        borderColor: "black",
+        borderColor: defineBorderColor,
+        borderDash: [5, 5], // 5px dash, 5px gap
         backgroundColor: defineBackgroundColor,
+        pointRadius: showLastPoint,
+        pointBackgroundColor: defineBorderColor,
       },
     ],
   };
@@ -62,4 +92,5 @@ function LineChart({
     </div>
   );
 }
+
 export default LineChart;
