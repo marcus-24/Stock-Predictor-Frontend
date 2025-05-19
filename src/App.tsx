@@ -7,6 +7,7 @@ import "./App.css";
 import { useQueries } from "react-query";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { IStock } from "./interfaces";
+import StockStats from "./components/StockStats";
 
 const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL; //need to have "VITE" prefix env variables and use this import method instead
 const LineChart = lazy(() => import("./components/LineChart")); // Always lazy load your chart components. As chart components are
@@ -46,6 +47,7 @@ function App() {
     );
     return (
       <Suspense fallback={<div>Loading chart...</div>}>
+        <StockStats stocks={stocks} preds={predictions} />
         <LineChart stocks={stocks} preds={predictions} />
       </Suspense>
     );

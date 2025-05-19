@@ -1,3 +1,4 @@
 export interface IStock {
-  [key: string]: number;
+  Date: string;
+  Close: number;
 }

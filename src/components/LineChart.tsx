@@ -6,19 +6,36 @@ import { ScriptableContext } from "chart.js";
 
 //Reference: https://medium.com/@arifwaghbakriwala97/time-series-prediction-intervals-1866545a5554
 
+type chartJSData = { x: string; y: number };
+
 function getPriceDifference(context: ScriptableContext<"line">): number {
-  return (
-    (context.dataset.data[context.dataIndex] as number) -
-    (context.dataset.data[0] as number)
-  );
+  const data = context.dataset.data;
+  const lastPoint = data[data.length - 1] as unknown as chartJSData;
+  const firstPoint = context.dataset.data[0] as unknown as chartJSData;
+  return lastPoint.y - firstPoint.y;
 }
 
-function formatData(results: IStock[]): { x: number; y: number }[] {
+function formatData(results: IStock[]): chartJSData[] {
   // avoid recalculation same results during rerender
   return results.map((result) => ({ x: result.Date, y: result.Close }));
 }
 
-function defineBorderColor(context: ScriptableContext<"line">): string {
+function formatShadedAreaData(
+  stocks: IStock[],
+  preds: IStock[]
+): chartJSData[] {
+  const nearest = 1000; // round to the nearest thousandth
+  const maxStock: number =
+    Math.round(Math.max(...stocks.map((x) => x.Close)) / nearest) * nearest;
+  return preds.map((ele) => ({ x: ele.Date, y: maxStock }));
+}
+
+function defineBorderColor(
+  context: ScriptableContext<"line">
+): string | undefined {
+  if (!context.chart.chartArea) {
+    return; //skip function if context is not available when page is loading
+  }
   const priceDifference = getPriceDifference(context);
   return priceDifference > 0 ? "green" : "red";
 }
@@ -82,6 +99,17 @@ function LineChart({
         backgroundColor: defineBackgroundColor,
         pointRadius: showLastPoint,
         pointBackgroundColor: defineBorderColor,
+      },
+      {
+        label: "Prediction Region",
+        data: useMemo(
+          () => formatShadedAreaData(stocks, preds),
+          [stocks, preds]
+        ),
+        fill: "start",
+        borderColor: "white",
+        backgroundColor: "rgba(255, 197, 134, 0.53)",
+        pointRadius: 0,
       },
     ],
   };
