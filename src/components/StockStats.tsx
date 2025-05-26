@@ -3,9 +3,9 @@ import { IStock } from "../interfaces";
 
 const roundPrice = (price: number) => Math.round(price * 100) / 100;
 
-function getLatestPrice(prices: IStock[]): number {
+function getLatestPrice(prices: IStock[]): string {
   const lastPrice = prices[prices.length - 1].Close;
-  return roundPrice(lastPrice); // round to closest hundredth
+  return roundPrice(lastPrice).toLocaleString("en-US"); // round to closest hundredth
 }
 
 function percentChangeString(prices: IStock[]): string {
@@ -22,6 +22,21 @@ function priceChangeString(prices: IStock[]): string {
   return displayString + `${roundPrice(priceChange)}`;
 }
 
+function generateStyle(prices: IStock[]): { [key: string]: string } {
+  const priceChange = prices[prices.length - 1].Close - prices[0].Close;
+  if (priceChange > 0) {
+    return {
+      color: "darkgreen",
+      backgroundColor: "rgba(85, 255, 0, 0.2)",
+    };
+  } else {
+    return {
+      color: "darkred",
+      backgroundColor: "rgba(255, 0, 0, 0.2)",
+    };
+  }
+}
+
 function StockStats({
   stocks,
   preds,
@@ -33,20 +48,16 @@ function StockStats({
   const stockPercentChange = percentChangeString(stocks);
   const stockPriceChange = priceChangeString(stocks);
 
-  const stock_w_preds = stocks.concat(preds);
-  const latestPred = useMemo(
-    () => getLatestPrice(stock_w_preds),
-    [stocks, preds]
-  );
-  const predPercentChange = percentChangeString(stock_w_preds);
-  const predPriceChange = priceChangeString(stock_w_preds);
+  const latestPred = useMemo(() => getLatestPrice(preds), [preds]);
+  const predPercentChange = percentChangeString(preds);
+  const predPriceChange = priceChangeString(preds);
 
   return (
     <div className="stock-stats">
-      <div>
+      <div style={generateStyle(stocks)}>
         {latestStock} {stockPercentChange} {stockPriceChange}
       </div>
-      <div>
+      <div style={generateStyle(preds)}>
         {latestPred} {predPercentChange} {predPriceChange}
       </div>
     </div>

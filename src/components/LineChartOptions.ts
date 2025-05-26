@@ -1,6 +1,6 @@
 import { ChartOptions } from "chart.js";
 // import moment from "moment";
-
+// todo: format hover labels (tooltip) https://youtu.be/GnRAbf9MMQI?si=c_EIuqEzBnA83Q_1
 export const lineChartOptions: ChartOptions<"line"> = {
   plugins: {
     title: {
@@ -11,18 +11,6 @@ export const lineChartOptions: ChartOptions<"line"> = {
     legend: {
       display: true,
     },
-    // annotation: {
-    //   // Had to use chartjs-plugin-annotation and register in the App.tsx
-    //   annotations: {
-    //     line1: {
-    //       type: "line",
-    //       scaleID: "x",
-    //       value: moment().format("YYYY-MM-DD"), //TODO: change so it tracks current time at given periods
-    //       borderColor: "rgb(255, 29, 29)",
-    //       borderWidth: 3,
-    //     },
-    //   },
-    // },
   },
   elements: {
     line: {
