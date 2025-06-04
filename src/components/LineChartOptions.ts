@@ -1,8 +1,22 @@
-import { ChartOptions } from "chart.js";
-// import moment from "moment";
+import { ChartOptions, TooltipItem } from "chart.js";
 // todo: format hover labels (tooltip) https://youtu.be/GnRAbf9MMQI?si=c_EIuqEzBnA83Q_1
 export const lineChartOptions: ChartOptions<"line"> = {
   plugins: {
+    tooltip: {
+      callbacks: {
+        title: (context: TooltipItem<"line">[]) => {
+          const dateString = (context[0].raw as { x: number }).x; //had to assume x is a number TS:2571
+          const dateObj = new Date(dateString);
+          const formattedDate = dateObj.toLocaleString([], {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          });
+          return formattedDate
+
+        }
+      }
+    },
     title: {
       display: true,
       text: "Dow Jones Index Prediction",
@@ -23,19 +37,19 @@ export const lineChartOptions: ChartOptions<"line"> = {
       max: "original", // Set max to the maximum value in your data
       type: "time",
       time: {
-        unit: "week",
-        displayFormats: { day: "yyyy MM" },
+        unit: "month",
+        displayFormats: { day: "MMM YYYY" },
       },
-      title: { display: true, text: "Date", font: { size: 30 } },
       ticks: {
         font: { size: 14 },
       },
+      grid: {display: false} // remove vertical grid lines
     },
     y: {
-      title: { display: true, text: "Price ($)", font: { size: 30 } },
       ticks: {
         font: { size: 14 },
       },
+      grid: {display: true} // keep horizontal grid lines
     },
   },
 };
