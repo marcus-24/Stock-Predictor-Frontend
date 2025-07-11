@@ -1,7 +1,7 @@
-/* * {
+* {
   border: 1px solid red;
 
-} */
+}
 
 #root {
   /* max-width: 1280px; */
@@ -14,19 +14,44 @@
   width: 1000px;
 }
 
+/* .chart-container:before,
+.chart-container:after {
+  content: "";
+  display: table
+}
+
+.chart-container:after {
+  clear: both
+} */
+
 .chart-container h2 {
   text-align: center;
 }
 
+.hud-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* vertical-align: center; */
+  /* height: 10vh; */
+}
+
 .stock-stats {
-  display: flex;
-  justify-content: center;
-  height: 10vh;
+  display: grid;
+  /* justify-content: center; */
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  /* align-items: center; */
+}
+
+.arrow {
+  grid-row: 1 / 3;
+  align-self: center;
+  /* vertical-align: middle; */
+
 }
 
 .stock-stats>div {
-  width: 25%;
-  border-radius: 20px;
-  text-align: center;
-  line-height: 4.5;
+  /* align-self: center; */
+  border-radius: 10px;
+  /* aspect-ratio: 2; */
 }
